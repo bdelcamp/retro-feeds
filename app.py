@@ -112,7 +112,7 @@ def rss_endpoint():
 
     auth_key  = request.args.get('auth_key') or getenv('PATREON_AUTH_KEY')
     if not auth_key:
-        return jsonify({'error': 'Missing required param: auth_keyss'}), 400
+        return jsonify({"error": "Missing required param: auth_key"}), 400
     slug      = request.args.get('slug')
     show_q    = request.args.get('show')
     image_url = request.args.get('image_url')
