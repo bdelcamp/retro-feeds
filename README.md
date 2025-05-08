@@ -2,12 +2,15 @@
 
 A lightweight Flask-based microservice to fetch, filter, and customize Patreon podcast RSS feeds by show name.
 > [!NOTE] Wik
+> 
 > This has literally only been tested / used for the Retro Warriors Podcast, as it's the only one I subscribe to on Patreon. So YMMV with other shows. It should be easily extensible.
 
 > [!NOTE] Also Wik
+> 
 > If you plan on self hosting this, please use a vpn like Tailscale or something. If you MUST expose it over the interwebs, use a reverse proxy with SSL as to not expose your patreon key to MITM attacks.
 
 > [!NOTE] Also Also Wik
+> 
 > If someone is MITM'ing you're stuff, you probably have an extensive patreon support list, or you have other things to worry about.
 
 ## Features
