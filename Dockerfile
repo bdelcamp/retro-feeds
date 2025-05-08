@@ -8,6 +8,7 @@ RUN apt-get update \
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir gunicorn
 
 # ─────── Final Stage ───────
 FROM python:3.13-slim
@@ -31,4 +32,4 @@ USER appuser
 EXPOSE 5000
 
 # Use Gunicorn for concurrency; adjust workers & threads as needed
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app", "--workers", "3", "--threads", "2"]
+CMD ["/home/appuser/.local/bin/gunicorn", "--bind", "0.0.0.0:5000", "app:app", "--workers", "3", "--threads", "2"]
