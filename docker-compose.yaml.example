@@ -5,8 +5,8 @@ services:
     build: .
     environment:
         - TZ=America/New_York
-    env_file:
-        - .env
+    # env_file:
+    #    - .env
     restart: unless-stopped
     container_name: retro-feeds
     networks:
