@@ -1,0 +1,25 @@
+---
+services:
+  retro-feeds:
+    image: bdelcamp/retro-feeds:latest
+    build: .
+    environment:
+        - TZ=America/New_York
+    env_file:
+        - .env
+    restart: unless-stopped
+    container_name: retro-feeds
+    networks:
+      - web
+      - default
+    # This assumes you have a Traefik network called "web" already created. 
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=web
+      - traefik.http.routers.retrofeeds.entrypoints=websecure
+      - traefik.http.routers.retrofeeds.rule=Host(`retrofeeds.yourdomain.awesome`)
+      # - traefik.http.routers.retrofeeds.tls.certresolver=cloudflare
+      # - traefik.http.services.retrofeeds.loadbalancer.server.port=5000
+networks:
+  web:
+    external: true
