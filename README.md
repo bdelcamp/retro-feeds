@@ -1,6 +1,14 @@
-# Podcast RSS Filter Service
+# Retro Feeds
 
 A lightweight Flask-based microservice to fetch, filter, and customize Patreon podcast RSS feeds by show name.
+> [!NOTE] Wik
+> This has literally only been tested / used for the Retro Warriors Podcast, as it's the only one I subscribe to on Patreon. So YMMV with other shows. It should be easily extensible.
+
+> [!NOTE] Also Wik
+> If you plan on self hosting this, please use a vpn like Tailscale or something. If you MUST expose it over the interwebs, use a reverse proxy with SSL as to not expose your patreon key to MITM attacks.
+
+> [!NOTE] Also Also Wik
+> If someone is MITM'ing you're stuff, you probably have an extensive patreon support list, or you have other things to worry about.
 
 ## Features
 
@@ -56,9 +64,9 @@ python app.py
 
 | Parameter   | Required | Description                                                    |
 | ----------- | -------- | -------------------------------------------------------------- |
-| `auth_key`  | Yes      | Your Patreon API auth key.                                     |
-| `slug`      | Yes      | The podcast slug (e.g., `retrowarriors`).                      |
-| `show`      | No       | The show name to filter (e.g., `Retro Warriors`).              |
+| `auth_key`  | Yes      | Your Patreon API auth key. Only required if [PATREON_AUTH_KEY environment variable](#environment-variables) is not set. If both are provided, the query parameter is the dominant option.                                     |
+| `slug`      | Yes      | The podcast slug (e.g., `Retro Warriors`).                      |
+| `show`      | No       | The show name to filter (e.g., `Read Along`).              |
 | `image_url` | No       | URL to override the podcast cover art in the channel metadata. |
 
 #### Responses
@@ -68,10 +76,10 @@ python app.py
   ```json
   {
     "available_feeds": [
-      "Retro Warriors",
-      "Retro Warriors Uncut",
-      "Talking Wizards",
+      "Main",
+      "Uncut",
       "Read Along",
+      ...
       "Miscellaneous"
     ]
   }
@@ -87,19 +95,19 @@ python app.py
 * **List feeds**
 
   ```bash
-  curl "http://localhost:5000/rss?auth_key=YOUR_KEY&slug=retrowarriors"
+  curl "http://localhost:5000/rss?auth_key=YOUR_KEY&slug=Retro%20Warriors"
   ```
 
 * **Fetch specific show**
 
   ```bash
-  curl "http://localhost:5000/rss?auth_key=YOUR_KEY&slug=retrowarriors&show=Talking%20Wizards"
+  curl "http://localhost:5000/rss?auth_key=YOUR_KEY&slug=Retro%20Warriors&show=Talking%20Wizards"
   ```
 
 * **Fetch with custom cover art**
 
   ```bash
-  curl "http://localhost:5000/rss?auth_key=YOUR_KEY&slug=retrowarriors&show=Read%20Along&image_url=https://example.com/cover.jpg"
+  curl "http://localhost:5000/rss?auth_key=YOUR_KEY&slug=Retro%20Warriors&show=Read%20Along&image_url=https://example.com/cover.jpg"
   ```
 
 ## Configuration
@@ -108,18 +116,28 @@ To support additional podcasts, update the `show_patterns_map` in `app.py`:
 
 ```python
 show_patterns_map = {
-    'retrowarriors': {
-        'Retro Warriors':       r'^Retro Warriors(?! Uncut)',
-        'Retro Warriors Uncut': r'^Retro Warriors Uncut',
-        'Talking Wizards':      r'^Talking Wizards',
-        'Read Along':           r'^Read Along',
-    },
+    'Retro Warriors': {
+            'Main': r'Retro Warriors(?! Uncut)',
+            'Uncut': r'Uncut',
+            'Talking Wizards': r'Talking Wizard',
+            'Read Along': r'Read Along',
+            'Cinema Rogues': r'^Cinema Rogues',
+            'Classic Corner': r'Classic Corner',
+        },
     'anotherpodcast': {
         'Episode A':           r'^Episode A',
         'Special Segment':     r'^Special Segment',
     },
 }
 ```
+
+### Environment Variables
+
+| Variable   | Description                                                    |
+| ---------- | ------------------------------------------------------------- |
+| `PATREON_AUTH_KEY` | Define this if you will be personally only accessing this instance. It will not be required in the request URL. |
+|`APP_PORT` | Overrides the port the application is served on. |
+|`DEBUG` | Sets the debug mode on the local flask server if you're testing. |
 
 ## Deployment
 
